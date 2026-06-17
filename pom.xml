@@ -35,6 +35,21 @@
             <artifactId>spring-boot-starter-webmvc-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+
+        <dependency>
+            <groupId>io.github.nbaars</groupId>
+            <artifactId>paseto4j-version4</artifactId>
+            <version>2024.3</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- optional: only required when your token need an expires date time as Java Instant Date -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -64,6 +79,8 @@
                             <version>${nullaway.version}</version>
                         </path>
                     </annotationProcessorPaths>
+                    <source>16</source>
+                    <target>16</target>
                 </configuration>
             </plugin>
             <plugin>
