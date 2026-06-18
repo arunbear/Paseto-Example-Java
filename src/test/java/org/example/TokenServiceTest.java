@@ -1,5 +1,6 @@
 package org.example;
 
+import io.vavr.control.Try;
 import lombok.extern.java.Log;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -25,9 +26,9 @@ class TestTokenService {
 
         AppToken appToken = AppToken.builder().userId(userId).role(role).expiresAt(expiresDate).build();
 
-        Optional<String> optToken = tokenService.encrypt(appToken);
-        Assertions.assertTrue(optToken.isPresent());
-        String token = optToken.get();
+        Try<String> encrypted = tokenService.encrypt(appToken);
+        Assertions.assertTrue(encrypted.isSuccess());
+        String token = encrypted.get();
         Assertions.assertNotNull(token);
         log.info(token);
 

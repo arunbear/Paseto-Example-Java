@@ -36,7 +36,6 @@
             <scope>test</scope>
         </dependency>
 
-
         <dependency>
             <groupId>io.github.nbaars</groupId>
             <artifactId>paseto4j-version4</artifactId>
@@ -54,6 +53,12 @@
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk18on</artifactId>
             <version>1.84</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.vavr</groupId>
+            <artifactId>vavr</artifactId>
+            <version>1.0.1</version>
         </dependency>
 
     </dependencies>

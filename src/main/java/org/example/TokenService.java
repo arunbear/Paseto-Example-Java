@@ -3,6 +3,7 @@ package org.example;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.vavr.control.Try;
 import lombok.extern.log4j.Log4j2;
 import org.paseto4j.commons.PasetoException;
 import org.paseto4j.commons.SecretKey;
@@ -25,16 +26,11 @@ public class TokenService {
     @Value("${app.token.footer:#{null}}")
     String footer = "";
 
-    public Optional<String> encrypt(AppToken token) {
-        String payload;
-        try {
-            payload = mapper().writeValueAsString(token);
-            return Optional.of(Paseto.encrypt(key(), payload, footer));
-        }
-        catch (PasetoException | JsonProcessingException e) {
-            log.error("Failed to encode token: {}", e.getMessage());
-            return Optional.empty();
-        }
+    public Try<String> encrypt(AppToken token) {
+        return Try.of(() -> {
+            String payload = mapper().writeValueAsString(token);
+            return Paseto.encrypt(key(), payload, footer);
+        });
     }
 
     public Optional<AppToken> decrypt(String token) {
