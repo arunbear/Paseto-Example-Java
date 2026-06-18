@@ -2,6 +2,7 @@ package org.example;
 
 import io.vavr.control.Try;
 import lombok.extern.java.Log;
+import org.assertj.core.api.BDDAssertions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+
+import static org.assertj.core.api.BDDAssertions.*;
 
 @Log
 @SpringBootTest
@@ -18,27 +21,37 @@ class TestTokenService {
     TokenService tokenService;
 
     @Test
-    void testGoodToken() {
+    void a_good_token_can_be_encrypted_and_decrypted() {
+        // given
         final String userId = "1234";
         final String role = "USER";
         final Instant expiresDate = Instant.now().plus(5, ChronoUnit.MINUTES);
 
-        AppToken appToken = AppToken.builder().userId(userId).role(role).expiresAt(expiresDate).build();
+        AppToken appToken = AppToken.builder()
+            .userId(userId)
+            .role(role)
+            .expiresAt(expiresDate)
+            .build();
 
+        // when
         Try<String> encrypted = tokenService.encrypt(appToken);
-        Assertions.assertTrue(encrypted.isSuccess());
+        then(encrypted.isSuccess()).isTrue();
+
+        // when
         String token = encrypted.get();
-        Assertions.assertNotNull(token);
+        then(token).isNotNull();
         log.info(token);
 
+        // when
         Try<AppToken> decrypted = tokenService.decrypt(token);
-        Assertions.assertTrue(decrypted.isSuccess());
-        AppToken decodedAppToken = decrypted.get();
+        then(decrypted.isSuccess()).isTrue();
 
-        Assertions.assertNotNull(decodedAppToken);
-        Assertions.assertEquals(userId, decodedAppToken.userId());
-        Assertions.assertEquals(role, decodedAppToken.role());
-        Assertions.assertEquals(expiresDate, decodedAppToken.expiresAt());
+        // when
+        AppToken decodedAppToken = decrypted.get();
+        then(decodedAppToken).isNotNull();
+        then(userId).isEqualTo(decodedAppToken.userId());
+        then(role).isEqualTo(decodedAppToken.role());
+        then(expiresDate).isEqualTo(decodedAppToken.expiresAt());
     }
 
     @Test
