@@ -2,8 +2,6 @@ package org.example;
 
 import io.vavr.control.Try;
 import lombok.extern.java.Log;
-import org.assertj.core.api.BDDAssertions;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -55,10 +53,14 @@ class TestTokenService {
     }
 
     @Test
-    void testBadToken() {
-        String fakeToken = "v3.local.mu4W-Il_eEMmGFt5Pe5uJrB3Vq3o4XjrdMeUp0grHqf48GgjN_KevFtHwJCEdbTUdiWhL_lQ-B1Qjsl2arf9TRdqw35bwGJgiPn9OAXezvFRhifmRZOTlZB9H_1u-luEzu5Y4SZCcmWtYDKgCt8jUv5KePUBkfWoKtsMmYgoXlSjqIv0bgxEUHG0kYkDUjXwpIc.UE9DLVBBU0VUTw";
-        Try<AppToken> optAppToken = tokenService.decrypt(fakeToken);
-        Assertions.assertTrue(optAppToken.isEmpty());
+    void a_bad_token_cannot_be_decrypted() {
+        // given
+        String fakeToken = "v3.local.incorrect-stuff";
+
+        // when
+        Try<AppToken> decrypted = tokenService.decrypt(fakeToken);
+        then(decrypted).isEmpty();
+        then(decrypted.getCause().getMessage()).startsWith("Token should start with v4.local.");
     }
 
 }
