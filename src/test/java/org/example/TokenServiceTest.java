@@ -9,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Optional;
 
 @Log
 @SpringBootTest
@@ -32,9 +31,9 @@ class TestTokenService {
         Assertions.assertNotNull(token);
         log.info(token);
 
-        Optional<AppToken> optAppToken = tokenService.decrypt(token);
-        Assertions.assertTrue(optAppToken.isPresent());
-        AppToken decodedAppToken = optAppToken.get();
+        Try<AppToken> decrypted = tokenService.decrypt(token);
+        Assertions.assertTrue(decrypted.isSuccess());
+        AppToken decodedAppToken = decrypted.get();
 
         Assertions.assertNotNull(decodedAppToken);
         Assertions.assertEquals(userId, decodedAppToken.userId());
@@ -45,7 +44,7 @@ class TestTokenService {
     @Test
     void testBadToken() {
         String fakeToken = "v3.local.mu4W-Il_eEMmGFt5Pe5uJrB3Vq3o4XjrdMeUp0grHqf48GgjN_KevFtHwJCEdbTUdiWhL_lQ-B1Qjsl2arf9TRdqw35bwGJgiPn9OAXezvFRhifmRZOTlZB9H_1u-luEzu5Y4SZCcmWtYDKgCt8jUv5KePUBkfWoKtsMmYgoXlSjqIv0bgxEUHG0kYkDUjXwpIc.UE9DLVBBU0VUTw";
-        Optional<AppToken> optAppToken = tokenService.decrypt(fakeToken);
+        Try<AppToken> optAppToken = tokenService.decrypt(fakeToken);
         Assertions.assertTrue(optAppToken.isEmpty());
     }
 
